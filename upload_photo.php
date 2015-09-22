@@ -3,6 +3,10 @@
     $filesize = $_FILES['user_file']['size'];
     $directory = $_SERVER['DOCUMENT_ROOT'] . '/uploads/';
     $uploadFile = $directory . $filename;
+    $description = $_POST['description'];
+    $time = date("Y-m-d H:i:s");
+    
+    $mysqli = mysqli_connect("localhost", "root", "", "instasomething");
 
     if (file_exists($_FILES['user_file']['tmp_name']))
     {
@@ -10,8 +14,20 @@
         {
             echo 'The file is valid and was successfully uploaded.  <br />';
             echo "The file, $filename, is $filesize bytes.<br />";
-
-        }else{
+            
+            $query = "INSERT INTO Posts (file_path, description, post_date) VALUES ('$filename', '$description', '$time');";
+            $result = mysqli_query($mysqli, $query);
+            if (!$result) {
+                exit('Database query error: '. mysql_error($mysqli));
+            }
+            else
+            {
+              // We want them to see their post
+              header('Location: index.php');
+            }
+        }
+        else
+        {
           echo 'The file was not moved';
         }
     }
